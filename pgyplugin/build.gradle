@@ -1,0 +1,100 @@
+apply plugin: 'groovy'
+//添加maven plugin, 用于发布我们的jar
+apply plugin: 'maven'
+dependencies {
+    compile gradleApi()
+    compile 'org.json:json:20090211'
+    compile 'com.squareup.okhttp:okhttp:2.2.0'
+    compile 'commons-lang:commons-lang:2.6'
+    runtime 'com.squareup.okhttp:okhttp:2.2.0'
+    compile 'com.squareup.okhttp:okhttp-urlconnection:2.2.0'
+    compile 'com.android.tools.build:gradle:2.3.3'
+}
+
+repositories {
+    mavenCentral()
+    jcenter()
+    google()
+}
+
+//设置maven deployer
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            //设置插件的GAV参数
+            pom.groupId = 'com.zhangniuniu.pgyupload'
+            pom.artifactId = 'pgyupload-plugin'
+            pom.version = 1.0
+            //文件发布到下面目录
+            repository(url: uri('../release'))
+        }
+    }
+}
+
+// 应用插件
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'maven-publish'
+
+
+def baseUrl = 'https://github.com/AlexSmille'
+def siteUrl = baseUrl
+def gitUrl = "${baseUrl}/Android-Gradle-Demo"
+def issueUrl = "${baseUrl}/issues"
+
+
+
+install {
+    repositories {
+        mavenInstaller {
+            // This generates POM.xml with proper paramters
+            pom.project {
+
+                //添加项目描述
+                name 'Gradle Plugin for Android'
+                url siteUrl
+
+                //设置开源证书信息
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                //添加开发者信息
+                developers {
+                    developer {
+                        name 'Alex_Mahao'
+                        email 'zziamahao@s163.com'
+                    }
+                }
+
+                scm {
+                    connection gitUrl
+                    developerConnection gitUrl
+                    url siteUrl
+                }
+            }
+        }
+
+    }
+}
+
+
+//配置上传Bintray相关信息
+bintray {
+    user = BINTRAY_USER
+    key = BINTRAY_KEY
+
+    configurations = ['archives']
+    pkg {
+        repo = 'maven' // 上传到中央仓库的名称
+        name = 'tt' // 上传到jcenter 的项目名称
+        desc = 'test gradle' // 项目描述
+        websiteUrl = siteUrl
+        issueTrackerUrl = issueUrl
+        vcsUrl = gitUrl
+        labels = ['gradle', 'plugin']
+        licenses = ['Apache-2.0']
+        publish = true
+    }
+}
