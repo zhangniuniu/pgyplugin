@@ -12,7 +12,7 @@
 
 
 需要加入拓展
-``` json
+``` gradle
     pgy {
          _api_key = "e8e478a631a1019ad80245712b995f40"
          uKey = "317e4d6b6bc1e0308d2fa4e6075cce40"
